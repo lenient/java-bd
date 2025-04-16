@@ -1,0 +1,29 @@
+name: Open Source Security
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+jobs:
+  black_duck_scan:
+    name: Black Duck scan
+    runs-on: solinas
+    steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+    - name: artifactPrepareVersion
+      uses: SAP/project-piper-action@v1.20.0
+      with:
+        step-name: artifactPrepareVersion
+        flags: >-
+          --versioningType library
+          --buildTool maven
+    - name: Black Duck scan
+      uses: SAP/project-piper-action@v1.20.0
+      with:
+        step-name: detectExecuteScan
+        flags: >-
+          --projectName 'registration-app'
+          --groups 'CNDJ_Learner_App'
+          --serverUrl 'https://sap.blackducksoftware.com'
+          --token ${{ secrets.BLACK_DUCK_TECH_USER_API_TOKEN }}
+          --verbose true
